@@ -73,6 +73,10 @@ function handleUserInput() {
     let modulo_operator_index = input_array.indexOf("%");
     let add_operator_index = input_array.indexOf("+");
     let substract_operator_index = input_array.indexOf("-");
+    const less_priority_operators = [
+      add_operator_index,
+      substract_operator_index,
+    ];
     const priority_operators = [
       multiply_operator_index,
       divide_operator_index,
@@ -96,17 +100,14 @@ function handleUserInput() {
     //Handle add and substract operators second
     else if (add_operator_index != -1 || substract_operator_index != -1) {
       //If they both exist in the calculation, get the first one
-      if (add_operator_index != -1 && substract_operator_index != -1) {
-        operator_index =
-          add_operator_index < substract_operator_index
-            ? add_operator_index
-            : substract_operator_index;
-      } else {
-        operator_index =
-          add_operator_index != -1
-            ? add_operator_index
-            : substract_operator_index;
-      }
+      let existant_operators = less_priority_operators.filter(
+        (item) => item >= 0
+      );
+      let first_operator = existant_operators.reduce((minOperator, item) => {
+        minOperator = item < minOperator ? item : minOperator;
+        return minOperator;
+      });
+      operator_index = first_operator;
     } else {
       displayCalculationError();
       return;
