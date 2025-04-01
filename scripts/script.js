@@ -79,7 +79,6 @@ function handleUserInput() {
     else if (first_number != null) {
       if (first_number.length <= 1) first_number = null;
       else {
-        console.log(typeof first_number);
         first_number = first_number.slice(0, -1);
       }
     } else {
@@ -94,6 +93,7 @@ function handleUserInput() {
   }
 
   function editScreenTextDisplay(first_number, second_number, operator) {
+    //Handle null inputs
     first_number = first_number == null ? "" : first_number;
     second_number = second_number == null ? "" : second_number;
     operator = operator == null ? "" : operator;
@@ -131,10 +131,9 @@ function divide(a, b) {
 }
 
 function operate(a, b, operator) {
-  //If operating on a single number, return it
-
   if (!validateCalculation(a, b, operator)) {
     ScreenErrorDisplayElement.innerText = "Invalid Calculation";
+    //If operating on a single number, return it
     if (a != null) return a;
     else return "";
   }
@@ -153,7 +152,8 @@ function operate(a, b, operator) {
       result = divide(a, b);
       break;
     default:
-      result = "Invalid Operator";
+      alert("Invalid Operator");
+      return "";
   }
   //We expect a string to deal with, not a number
   return String(result);
