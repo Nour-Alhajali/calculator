@@ -33,6 +33,20 @@ body {
 .calculator__frame__screen {
   width: 100%;
   height: 35%;
+  display: flex;
+  flex-direction: column;
+  justify-content: end;
+  align-items: end;
+  padding: 10% 10% 8% 10%;
+}
+.calculator__frame__screen__text-display {
+  font-size: 2rem;
+  font-weight: bold;
+  color: white;
+}
+.calculator__frame__screen__error-display {
+  height: 10px;
+  color: red;
 }
 .calculator__frame__buttons {
   width: 100%;

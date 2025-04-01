@@ -1,21 +1,37 @@
 const buttonsContainerElement = document.querySelector(
   ".calculator__frame__buttons"
 );
+
+const ScreenTextDisplayElement = document.querySelector(
+  ".calculator__frame__screen__text-display"
+);
+
+const ScreenErrorDisplayElement = document.querySelector(
+  ".calculator__frame__screen__error-display"
+);
+
+//Prevent default element(buttons) dragging
+document.addEventListener("drag", (e) => e.preventDefault());
+
 handleUserInput();
 function handleUserInput() {
   let first_number = null;
   let second_number = null;
   let operator = null;
 
-  buttonsContainerElement.addEventListener("click", onCalculatorButtonClick);
+  buttonsContainerElement.addEventListener(
+    "mousedown",
+    onCalculatorButtonClick
+  );
 
   function onCalculatorButtonClick(event) {
     let button_innerText = event.target.innerText;
     let validOperators = "+-*/";
     let validNumbers = "1234567890.";
-
     //null is loosely equal to undefined, kept for readablity
     if (validNumbers.includes(button_innerText)) {
+      ScreenErrorDisplayElement.innerText = "";
+
       if (operator == undefined) {
         first_number =
           first_number == undefined
@@ -32,26 +48,54 @@ function handleUserInput() {
     } else {
       switch (button_innerText) {
         case "=":
-          alert(operate(first_number, second_number, operator));
+          first_number = operate(first_number, second_number, operator);
+          second_number = null;
+          operator = null;
           break;
-        case "c":
+        case "C":
           resetCalculator();
           break;
+        case "B":
+          performBackSpace();
+          break;
         default:
-          alert("invalid calculation");
+          alert("invalid calculation: " + button_innerText);
           resetCalculator();
           break;
       }
     }
-    console.log(first_number);
-    console.log(second_number);
-    console.log(operator);
+    editScreenTextDisplay(first_number, second_number, operator);
+  }
+
+  function performBackSpace() {
+    if (second_number != null) {
+      if (second_number.length <= 1) second_number = null;
+      else second_number = second_number.slice(0, -1);
+    } else if (operator != null) operator = null;
+    else if (first_number != null) {
+      if (first_number.length <= 1) first_number = null;
+      else {
+        console.log(typeof first_number);
+        first_number = first_number.slice(0, -1);
+      }
+    } else {
+      resetCalculator();
+    }
   }
 
   function resetCalculator() {
     first_number = null;
     second_number = null;
     operator = null;
+  }
+
+  function editScreenTextDisplay(first_number, second_number, operator) {
+    first_number = first_number == null ? "" : first_number;
+    second_number = second_number == null ? "" : second_number;
+    operator = operator == null ? "" : operator;
+
+    ScreenTextDisplayElement.innerText =
+      first_number + operator + second_number;
   }
 }
 function add(a, b) {
@@ -83,6 +127,13 @@ function divide(a, b) {
 }
 
 function operate(a, b, operator) {
+  //If operating on a single number, return it
+
+  if (!validateCalculation(a, b, operator)) {
+    ScreenErrorDisplayElement.innerText = "Invalid Calculation";
+    if (a != null) return a;
+    else return "";
+  }
   let result;
   switch (operator) {
     case "+":
@@ -100,5 +151,13 @@ function operate(a, b, operator) {
     default:
       result = "Invalid Operator";
   }
-  return result;
+  //We expect a string to deal with, not a number
+  return String(result);
+
+  function validateCalculation(first_number, second_number, operator) {
+    if (first_number == null || second_number == null || operator == null) {
+      return false;
+    }
+    return true;
+  }
 }
