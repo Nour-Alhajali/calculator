@@ -11,9 +11,10 @@ const ScreenErrorDisplayElement = document.querySelector(
 );
 
 //Prevent default element(buttons) dragging
-document.addEventListener("drag", (e) => e.preventDefault());
 
+preventDefaultDragBehaviour();
 handleUserInput();
+
 function handleUserInput() {
   let first_number = null;
   let second_number = null;
@@ -25,13 +26,13 @@ function handleUserInput() {
   );
 
   function onCalculatorButtonClick(event) {
+    ScreenErrorDisplayElement.innerText = "";
+
     let button_innerText = event.target.innerText;
     let validOperators = "+-*/";
     let validNumbers = "1234567890.";
     //null is loosely equal to undefined, kept for readablity
     if (validNumbers.includes(button_innerText)) {
-      ScreenErrorDisplayElement.innerText = "";
-
       if (operator == undefined) {
         first_number =
           first_number == undefined
@@ -45,28 +46,31 @@ function handleUserInput() {
       }
     } else if (validOperators.includes(button_innerText)) {
       operator = button_innerText;
+      //If not a number nor an operator:
     } else {
       switch (button_innerText) {
         case "=":
-          first_number = operate(first_number, second_number, operator);
-          second_number = null;
-          operator = null;
+          perforCalculation(first_number, second_number, operator);
           break;
         case "C":
-          resetCalculator();
+          performReset();
           break;
         case "B":
           performBackSpace();
           break;
         default:
-          alert("invalid calculation: " + button_innerText);
-          resetCalculator();
+          performReset();
           break;
       }
     }
     editScreenTextDisplay(first_number, second_number, operator);
   }
 
+  function perforCalculation(first, second, op) {
+    first_number = operate(first, second, op);
+    second_number = null;
+    operator = null;
+  }
   function performBackSpace() {
     if (second_number != null) {
       if (second_number.length <= 1) second_number = null;
@@ -79,11 +83,11 @@ function handleUserInput() {
         first_number = first_number.slice(0, -1);
       }
     } else {
-      resetCalculator();
+      performReset();
     }
   }
 
-  function resetCalculator() {
+  function performReset() {
     first_number = null;
     second_number = null;
     operator = null;
@@ -160,4 +164,8 @@ function operate(a, b, operator) {
     }
     return true;
   }
+}
+
+function preventDefaultDragBehaviour() {
+  document.addEventListener("drag", (e) => e.preventDefault());
 }
