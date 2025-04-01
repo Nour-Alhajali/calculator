@@ -27,7 +27,7 @@ function handleUserInput() {
     ScreenErrorDisplayElement.innerText = "";
 
     let button_innerText = event.target.innerText;
-    let validOperators = "+-*/";
+    let validOperators = "+-*/%";
     let validNumbers = "1234567890.";
 
     //Handle inputted numbers-operators-specialCharacters
@@ -70,24 +70,28 @@ function handleUserInput() {
 
     let multiply_operator_index = input_array.indexOf("*");
     let divide_operator_index = input_array.indexOf("/");
+    let modulo_operator_index = input_array.indexOf("%");
     let add_operator_index = input_array.indexOf("+");
     let substract_operator_index = input_array.indexOf("-");
+    const priority_operators = [
+      multiply_operator_index,
+      divide_operator_index,
+      modulo_operator_index,
+    ];
 
     let operator_index;
-    //Handle multipication and divide operators first
-    if (multiply_operator_index != -1 || divide_operator_index != -1) {
-      //If they both exist in the calculation, get the first one
-      if (multiply_operator_index != -1 && divide_operator_index != -1) {
-        operator_index =
-          multiply_operator_index < divide_operator_index
-            ? multiply_operator_index
-            : divide_operator_index;
-      } else {
-        operator_index =
-          multiply_operator_index != -1
-            ? multiply_operator_index
-            : divide_operator_index;
-      }
+    //Handle multipication, divide, modulo operators first
+    if (
+      multiply_operator_index != -1 ||
+      divide_operator_index != -1 ||
+      modulo_operator_index != -1
+    ) {
+      let existant_operators = priority_operators.filter((item) => item >= 0);
+      let first_operator = existant_operators.reduce((minOperator, item) => {
+        minOperator = item < minOperator ? item : minOperator;
+        return minOperator;
+      });
+      operator_index = first_operator;
     }
     //Handle add and substract operators second
     else if (add_operator_index != -1 || substract_operator_index != -1) {
@@ -196,6 +200,13 @@ function divide(a, b) {
   return Math.round((a / b) * 1000) / 1000;
 }
 
+function modulate(a, b) {
+  a = +a;
+  b = +b;
+
+  return a % b;
+}
+
 function operate(a, b, operator) {
   if (!validateCalculation(a, b, operator)) {
     ScreenErrorDisplayElement.innerText = "Invalid Calculation";
@@ -216,6 +227,9 @@ function operate(a, b, operator) {
       break;
     case "/":
       result = divide(a, b);
+      break;
+    case "%":
+      result = modulate(a, b);
       break;
     default:
       alert("Invalid Operator");
