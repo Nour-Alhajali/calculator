@@ -112,9 +112,67 @@ body {
   }
 }
 
+.nours-piece {
+  position: absolute;
+  right: 30px;
+  bottom: 30px;
+
+  &__nour-pic {
+    width: 5rem;
+    height: 5rem;
+
+    border: 2px $--color-light-background solid;
+    border-radius: 3rem;
+
+    background-image: url("../assets/images/Nour-Profile-Pic.png");
+    background-repeat: no-repeat;
+    background-size: 100%;
+    background-position: 0% 30%;
+
+    background-color: $--color-light-background;
+
+    cursor: not-allowed;
+  }
+  &__link-icons {
+    display: flex;
+    flex-direction: row;
+
+    justify-content: space-between;
+
+    &__icon {
+      width: 2rem;
+      height: 2rem;
+
+      background-color: transparent;
+      background-repeat: no-repeat;
+      background-size: 100%;
+      background-position: 50%;
+
+      border-radius: 1.5rem;
+
+      &--github {
+        background-image: url("../assets/images/github.png");
+        &:hover {
+          scale: 1.1;
+        }
+      }
+      &--linkedin {
+        background-image: url("../assets/images/linkedin.png");
+        &:hover {
+          scale: 1.1;
+        }
+      }
+    }
+  }
+}
+
 @media (max-width: 680px) {
   .calculator {
-    width: 80vw;
+    width: 75vw;
     height: calc(80vw + 200px);
+  }
+
+  .nours-piece {
+    opacity: 0;
   }
 }
