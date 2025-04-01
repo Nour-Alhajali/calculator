@@ -82,11 +82,15 @@ body {
         color: $--color-text;
 
         font-size: 1.5rem;
-        
+
         &:hover {
-            background-color: #ffffff1e;
+          background-color: #ffffff1e;
         }
-    }
+
+        &--equal-button {
+          flex-grow: 1;
+        }
+      }
     }
   }
 }

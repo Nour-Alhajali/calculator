@@ -59,4 +59,7 @@ body {
 }
 .calculator__frame__buttons__button:hover {
   background-color: rgba(255, 255, 255, 0.1176470588);
+}
+.calculator__frame__buttons__button--equal-button {
+  flex-grow: 1;
 }/*# sourceMappingURL=style.css.map */
