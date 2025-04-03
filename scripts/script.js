@@ -16,9 +16,8 @@ preventDefaultDragBehaviour();
 handleUserInput();
 
 function handleUserInput() {
-  let first_number = null;
-  let second_number = null;
-  let operator = null;
+  const input_array = [];
+  let input_index = 0;
 
   buttonsContainerElement.addEventListener(
     "mousedown",
@@ -31,26 +30,20 @@ function handleUserInput() {
     let button_innerText = event.target.innerText;
     let validOperators = "+-*/";
     let validNumbers = "1234567890.";
-    //null is loosely equal to undefined, kept for readablity
+
+    //Handle numbers-operators-specialCharacters
+    let lastArrayItem = input_array[input_array.length - 1];
+    let lastArrayInput;
+    if (lastArrayItem) lastArrayInput = lastArrayItem[lastArrayItem.length - 1];
     if (validNumbers.includes(button_innerText)) {
-      if (operator == undefined) {
-        first_number =
-          first_number == undefined
-            ? button_innerText
-            : first_number + button_innerText;
-      } else {
-        second_number =
-          second_number == undefined
-            ? button_innerText
-            : second_number + button_innerText;
-      }
+      pushNumberToInputArray(button_innerText);
     } else if (validOperators.includes(button_innerText)) {
-      operator = button_innerText;
-      //If not a number nor an operator:
+      if (validNumbers.includes(lastArrayInput))
+        pushOperatorToInputArray(button_innerText);
     } else {
       switch (button_innerText) {
         case "=":
-          perforCalculation(first_number, second_number, operator);
+          while (input_array.length > 1) performCalculation();
           break;
         case "C":
           performReset();
@@ -63,43 +56,119 @@ function handleUserInput() {
           break;
       }
     }
-    editScreenTextDisplay(first_number, second_number, operator);
+    editScreenTextDisplay(input_array);
   }
 
-  function perforCalculation(first, second, op) {
-    first_number = operate(first, second, op);
-    second_number = null;
-    operator = null;
-  }
-  function performBackSpace() {
-    if (second_number != null) {
-      if (second_number.length <= 1) second_number = null;
-      else second_number = second_number.slice(0, -1);
-    } else if (operator != null) operator = null;
-    else if (first_number != null) {
-      if (first_number.length <= 1) first_number = null;
-      else {
-        first_number = first_number.slice(0, -1);
+  function performCalculation() {
+    let first_number;
+    let second_number;
+    let operator;
+
+    let multiply_operator_index = input_array.indexOf("*");
+    let divide_operator_index = input_array.indexOf("/");
+    let add_operator_index = input_array.indexOf("+");
+    let substract_operator_index = input_array.indexOf("-");
+
+    let operator_index;
+    //Handle multipication and divide operators first
+    if (multiply_operator_index != -1 || divide_operator_index != -1) {
+      //If they both exist in the calculation, get the first one
+      if (multiply_operator_index != -1 && divide_operator_index != -1) {
+        operator_index =
+          multiply_operator_index < divide_operator_index
+            ? multiply_operator_index
+            : divide_operator_index;
+      } else {
+        operator_index =
+          multiply_operator_index != -1
+            ? multiply_operator_index
+            : divide_operator_index;
+      }
+    }
+    //Handle add and substract operators second
+    else if (add_operator_index != -1 || substract_operator_index != -1) {
+      //If they both exist in the calculation, get the first one
+      if (add_operator_index != -1 && substract_operator_index != -1) {
+        operator_index =
+          add_operator_index < substract_operator_index
+            ? add_operator_index
+            : substract_operator_index;
+      } else {
+        operator_index =
+          add_operator_index != -1
+            ? add_operator_index
+            : substract_operator_index;
       }
     } else {
-      performReset();
+      displayCalculationError();
+      return;
+    }
+    //If oparetor/s was/were found, continue
+    operator = input_array[operator_index];
+
+    //get numbers on left and right of operator
+    let first_number_Index = operator_index - 1;
+    first_number = input_array[first_number_Index];
+
+    let second_number_index = operator_index + 1;
+    second_number = input_array[second_number_index];
+
+    if (first_number == "" || second_number == "") {
+      displayCalculationError();
+      //Delete Operator, To align with the result of pressing "=" on a single number and an operator
+      performBackSpace();
+
+      return;
+    } else {
+      let result = operate(first_number, second_number, operator);
+      replaceFromInputArray(result);
+    }
+
+    //Replace inputs with the result of equation
+    function replaceFromInputArray(result) {
+      input_array.splice(second_number_index, 1);
+      input_array.splice(operator_index, 1);
+      //Replace the first number with the each item of the result seperately
+      input_array.splice(first_number_Index, 1, result);
+      input_index -= 2;
+    }
+  }
+
+  function pushNumberToInputArray(numberAsString) {
+    if (input_array[input_index] == undefined)
+      input_array[input_index] = numberAsString;
+    else input_array[input_index] += numberAsString;
+  }
+  function pushOperatorToInputArray(operatorAsString) {
+    input_array.push(operatorAsString);
+    input_index += 2;
+  }
+  function performBackSpace() {
+    //Either delete item and operator if item is empty, or delete from the item if it's not
+    if (
+      input_array[input_index] == undefined ||
+      input_array[input_index] == ""
+    ) {
+      if (input_array.length >= 2) {
+        input_index -= 2;
+        input_array.splice(input_index + 1);
+      }
+    } else {
+      let lastUnemptyIndex = input_array.length - 1;
+      let lastInputtedItem = input_array[lastUnemptyIndex];
+
+      lastInputtedItem = lastInputtedItem.slice(0, -1);
+
+      input_array.splice(lastUnemptyIndex, 1, lastInputtedItem);
     }
   }
 
   function performReset() {
-    first_number = null;
-    second_number = null;
-    operator = null;
+    input_array.splice(0);
   }
 
-  function editScreenTextDisplay(first_number, second_number, operator) {
-    //Handle null inputs
-    first_number = first_number == null ? "" : first_number;
-    second_number = second_number == null ? "" : second_number;
-    operator = operator == null ? "" : operator;
-
-    ScreenTextDisplayElement.innerText =
-      first_number + operator + second_number;
+  function editScreenTextDisplay(input_array) {
+    ScreenTextDisplayElement.innerText = input_array.join("");
   }
 }
 function add(a, b) {
@@ -168,4 +237,13 @@ function operate(a, b, operator) {
 
 function preventDefaultDragBehaviour() {
   document.addEventListener("drag", (e) => e.preventDefault());
+}
+
+//Utility Funcitons
+function reverseString(str) {
+  return str.split("").reverse().join("");
+}
+
+function displayCalculationError() {
+  ScreenErrorDisplayElement.innerText = "Invalid Calculation";
 }
