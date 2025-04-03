@@ -26,8 +26,8 @@ body {
 
 //calculator
 .calculator {
-  width: 60vw;
-  height: 90vh;
+  width: min(60vw, 30rem);
+  height: min(90vw, 45rem);
 
   background-color: $--color-dark-background;
 
@@ -109,5 +109,12 @@ body {
         }
       }
     }
+  }
+}
+
+@media (max-width: 680px) {
+  .calculator {
+    width: 80vw;
+    height: calc(80vw + 200px);
   }
 }
