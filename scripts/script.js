@@ -37,6 +37,11 @@ function handleUserInput() {
     if (validNumbers.includes(button_innerText)) {
       pushNumberToInputArray(button_innerText);
     } else if (validOperators.includes(button_innerText)) {
+      //Allow input for first negative numbers
+      if (button_innerText == "-") {
+        if (input_array.length == 0) pushNumberToInputArray(button_innerText);
+      }
+
       if (validNumbers.includes(lastArrayInput))
         pushOperatorToInputArray(button_innerText);
     } else {
