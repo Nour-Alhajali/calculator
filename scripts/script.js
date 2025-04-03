@@ -11,7 +11,6 @@ const ScreenErrorDisplayElement = document.querySelector(
 );
 
 //Prevent default element(buttons) dragging
-
 preventDefaultDragBehaviour();
 handleUserInput();
 
@@ -31,7 +30,7 @@ function handleUserInput() {
     let validOperators = "+-*/";
     let validNumbers = "1234567890.";
 
-    //Handle numbers-operators-specialCharacters
+    //Handle inputted numbers-operators-specialCharacters
     let lastArrayItem = input_array[input_array.length - 1];
     let lastArrayInput;
     if (lastArrayItem) lastArrayInput = lastArrayItem[lastArrayItem.length - 1];
@@ -46,13 +45,13 @@ function handleUserInput() {
           while (input_array.length > 1) performCalculation();
           break;
         case "C":
-          performReset();
+          performClear();
           break;
         case "B":
           performBackSpace();
           break;
         default:
-          performReset();
+          performClear();
           break;
       }
     }
@@ -103,7 +102,6 @@ function handleUserInput() {
       displayCalculationError();
       return;
     }
-    //If oparetor/s was/were found, continue
     operator = input_array[operator_index];
 
     //get numbers on left and right of operator
@@ -115,20 +113,18 @@ function handleUserInput() {
 
     if (first_number == "" || second_number == "") {
       displayCalculationError();
-      //Delete Operator, To align with the result of pressing "=" on a single number and an operator
+      //Delete Operator, To align with the result of using "=" on a single number and an operator
       performBackSpace();
 
       return;
     } else {
       let result = operate(first_number, second_number, operator);
-      replaceFromInputArray(result);
+      replaceEquationWithResult(result);
     }
 
-    //Replace inputs with the result of equation
-    function replaceFromInputArray(result) {
+    function replaceEquationWithResult(result) {
       input_array.splice(second_number_index, 1);
       input_array.splice(operator_index, 1);
-      //Replace the first number with the each item of the result seperately
       input_array.splice(first_number_Index, 1, result);
       input_index -= 2;
     }
@@ -163,12 +159,8 @@ function handleUserInput() {
     }
   }
 
-  function performReset() {
+  function performClear() {
     input_array.splice(0);
-  }
-
-  function editScreenTextDisplay(input_array) {
-    ScreenTextDisplayElement.innerText = input_array.join("");
   }
 }
 function add(a, b) {
@@ -246,4 +238,8 @@ function reverseString(str) {
 
 function displayCalculationError() {
   ScreenErrorDisplayElement.innerText = "Invalid Calculation";
+}
+
+function editScreenTextDisplay(input_array) {
+  ScreenTextDisplayElement.innerText = input_array.join("");
 }
