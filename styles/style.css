@@ -23,7 +23,7 @@ body {
   width: 100%;
   height: 100%;
   border: 2px #8ae9ec solid;
-  border-radius: 1.5rem;
+  border-radius: min(6vw, 1.5rem);
   display: flex;
   flex-direction: column;
   justify-content: start;

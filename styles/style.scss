@@ -36,7 +36,7 @@ body {
     height: 100%;
 
     border: 2px $--color-light-background solid;
-    border-radius: 1.5rem;
+    border-radius: min(6vw, 1.5rem);
 
     display: flex;
     flex-direction: column;
