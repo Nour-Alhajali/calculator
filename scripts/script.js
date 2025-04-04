@@ -210,7 +210,7 @@ function modulate(a, b) {
 
 function operate(a, b, operator) {
   if (!validateCalculation(a, b, operator)) {
-    ScreenErrorDisplayElement.innerText = "Invalid Calculation";
+    displayCalculationError();
     //If operating on a single number, return it
     if (a != null) return a;
     else return "";
@@ -227,8 +227,13 @@ function operate(a, b, operator) {
       result = multiply(a, b);
       break;
     case "/":
-      result = divide(a, b);
-      break;
+      if (b == 0) {
+        displayCalculationError();
+        return;
+      } else {
+        result = divide(a, b);
+        break;
+      }
     case "%":
       result = modulate(a, b);
       break;
